@@ -1,0 +1,5 @@
+#!/bin/bash
+
+g++ -o aoc main.cpp
+
+[[ "${1}" == "t" ]] && ./aoc testin.txt || ./aoc input.txt
