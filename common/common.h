@@ -1,7 +1,13 @@
+#pragma once
+
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <vector>
+
+namespace common {
 
 inline bool iterateFile(const std::string& fileName, std::function<void(const std::string&)> func)
 {
@@ -18,3 +24,15 @@ inline bool iterateFile(const std::string& fileName, std::function<void(const st
 
     return true;
 }
+
+inline void tokenize(const std::string& in, std::vector<std::string>& out, char delim)
+{
+    std::stringstream ss(in);
+    std::string tok;
+    while (!ss.eof()) {
+        std::getline(ss, tok, delim);
+        out.emplace_back(tok);
+    }
+}
+
+} // namespace common

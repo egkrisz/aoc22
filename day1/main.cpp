@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     }
 
     std::vector<Elf> elfs(1);
-    bool res = iterateFile(argv[1], [&elfs](const std::string& line){
+    bool res = common::iterateFile(argv[1], [&elfs](const std::string& line){
             std::cout << line << "\n";
             if (line != "") {
                 int cal = std::stoi(line);
