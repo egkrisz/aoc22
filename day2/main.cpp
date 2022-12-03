@@ -100,7 +100,6 @@ int main(int argc, char *argv[]) {
     bool res = common::iterateFile(argv[1], [&scoreI, &scoreII](const std::string& line){
             std::vector<std::string> round;
             common::tokenize(line, round, ' ');
-            std::cout << "Opponent: " << round[0] << " You: " << round[1] << '\n';
             scoreI += getScoreI(round[0][0], round[1][0]);
             scoreII += getScoreII(round[0][0], round[1][0]);
         });
