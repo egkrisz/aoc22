@@ -14,8 +14,6 @@ EOF
 function generate_main() {
     cat <<EOF
 #include <algorithm>
-#include <iostream>
-#include <numeric>
 #include <vector>
 
 #include "../common/common.h"

@@ -1,10 +1,4 @@
 #include <algorithm>
-#include <cstdint>
-#include <iostream>
-#include <iterator>
-#include <numeric>
-#include <map>
-#include <set>
 #include <vector>
 
 #include "../common/common.h"
