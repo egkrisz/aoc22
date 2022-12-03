@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -e
+
+function usage() {
+    cat <<EOF
+Generate skeleton for a specific day for the AOC challange.
+
+Usage: $(basename "$0") -h
+  -d DAY     The day of the challange as digits.
+EOF
+}
+
+function generate_main() {
+    cat <<EOF
+#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <vector>
+
+#include "../common/common.h"
+
+int main(int argc, char *argv[]) {
+    common::assert(argc >= 2, "No inputfile provided");
+
+    bool res = common::iterateFile(argv[1], [](const std::string& line){
+        });
+    common::assert(res, "Failed to iterate file");
+
+    //================================ PART ONE ====================================
+    std::cout << "[Part I] Result: " << "RESULT" << "\n";
+
+    //================================ PART TWO ====================================
+    std::cout << "[Part 2] Result " << "RESULT" << "\n";
+
+    return 0;
+}
+EOF
+}
+
+day="$(date +%d)"
+while getopts ":h:td:" opt; do
+  case "${opt}" in
+    h)
+        usage
+        exit 0
+        ;;
+    d)
+        day="${OPTARG}"
+        ;;
+    *)
+      usage >&2
+      exit 1
+  esac
+done
+
+scriptdir=`cd "$(dirname $0)" && pwd`
+mkdir "${scriptdir}/day${day}"
+cd "${scriptdir}/day${day}"
+
+echo "$(generate_main)" > main.cpp
+touch testin.txt
+touch input.txt
+
+echo "Skeletons for Day${day} have been generated"

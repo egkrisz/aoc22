@@ -17,14 +17,10 @@ struct Elf {
 };
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        std::cerr << "No inputfile provided\n";
-        abort();
-    }
+    common::assert(argc >= 2, "No inputfile provided");
 
     std::vector<Elf> elfs(1);
     bool res = common::iterateFile(argv[1], [&elfs](const std::string& line){
-            std::cout << line << "\n";
             if (line != "") {
                 int cal = std::stoi(line);
                 elfs.back().addItem(cal);
@@ -32,10 +28,7 @@ int main(int argc, char *argv[]) {
                 elfs.emplace_back(Elf());
             }
         });
-
-    if (!res) {
-        abort();
-    }
+    common::assert(res, "Failed to iterate file");
 
     std::vector<int> sums;
     for (const auto& elf : elfs) {

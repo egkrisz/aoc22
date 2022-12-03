@@ -26,25 +26,16 @@ static std::map<Result, std::vector<std::pair<Shape, Shape>>> stateMachine = {
     { Win,  { { Rock, Paper },    { Scissors, Rock },     { Paper, Scissors } } }
 };
 
-Shape translateOppShape(char opp) {
+Shape translateShape(char opp) {
     switch (opp) {
-        case 'A': return Rock;
-        case 'B': return Paper;
-        case 'C': return Scissors;
+        case 'A': case 'X': return Rock;
+        case 'B': case 'Y': return Paper;
+        case 'C': case 'Z': return Scissors;
     }
     return Invalid;
 }
 
-Shape translateOwnShape(char own) {
-    switch (own) {
-        case 'X': return Rock;
-        case 'Y': return Paper;
-        case 'Z': return Scissors;
-    }
-    return Invalid;
-}
-
-Result translateOwnResult(char own) {
+Result translateResult(char own) {
     switch (own) {
         case 'X': return Lose;
         case 'Y': return Draw;
@@ -67,51 +58,38 @@ Shape getOwnShapeFromResult(Shape opp, Result result) {
     return Invalid;
 }
 
-uint64_t getScoreI(char opp, char you) {
-    uint64_t score = 0;
+int getScoreI(char opp, char you) {
+    Shape oppShape = translateShape(opp);
+    Shape ownShape = translateShape(you);
 
-    Shape oppShape = translateOppShape(opp);
-    Shape ownShape = translateOwnShape(you);
-
-    score += ownShape;
-
+    int score = ownShape;
     if (oppShape == ownShape) score += Draw;
     else if (isResult(Win, oppShape, ownShape)) score += Win;
 
     return score;
 }
 
-uint64_t getScoreII(char opp, char you) {
-    Result result = translateOwnResult(you);
-    Shape oppShape = translateOppShape(opp);
+int getScoreII(char opp, char you) {
+    Result result = translateResult(you);
+    Shape oppShape = translateShape(opp);
     Shape ownShape = getOwnShapeFromResult(oppShape, result);
 
     return ownShape + result;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        std::cerr << "No inputfile provided\n";
-        abort();
-    }
+    common::assert(argc >= 2, "No inputfile provided");
 
-    uint64_t scoreI = 0;
-    uint64_t scoreII = 0;
+    int scoreI = 0;
+    int scoreII = 0;
     bool res = common::iterateFile(argv[1], [&scoreI, &scoreII](const std::string& line){
-            std::vector<std::string> round;
-            common::tokenize(line, round, ' ');
+            std::vector<std::string> round = common::tokenize(line, ' ');
             scoreI += getScoreI(round[0][0], round[1][0]);
             scoreII += getScoreII(round[0][0], round[1][0]);
         });
+    common::assert(res, "Failed to iterate file");
 
-    if (!res) {
-        abort();
-    }
-
-    //================================ PART ONE ====================================
     std::cout << "[Part I] Total score: " << scoreI << '\n';
-
-    //================================ PART TWO ====================================
     std::cout << "[Part II] Total score: " << scoreII << '\n';
 
     return 0;

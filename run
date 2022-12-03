@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+function usage() {
+    cat <<EOF
+Run AOC project for a given day with test or real input.
+
+Usage: $(basename "$0") -h
+  -d DAY     The day of the challange as digits.
+  -t         Run the program with test input.
+EOF
+}
+
+is_test="false"
+day="1"
+while getopts ":h:td:" opt; do
+  case "${opt}" in
+    h)
+        usage
+        exit 0
+        ;;
+    t)
+        is_test="true"
+        ;;
+    d)
+        day="${OPTARG}"
+        ;;
+    *)
+      usage >&2
+      exit 1
+  esac
+done
+
+scriptdir=`cd "$(dirname $0)" && pwd`
+cd "${scriptdir}/day${day}"
+g++ -o aoc main.cpp -Wall -std=c++17
+
+[[ "${is_test}" == "true" ]] && ./aoc testin.txt || ./aoc input.txt
