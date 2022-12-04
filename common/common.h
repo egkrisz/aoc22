@@ -39,12 +39,16 @@ inline std::vector<std::string> tokenize(const std::string& in, char delim = ' '
 }
 
 template<typename ...Args>
+inline void print(Args&& ...args) {
+    std::ostringstream ss;
+    (ss << ... << std::forward<Args>(args));
+    std::cout << ss.str() << std::endl;
+}
+
+template<typename ...Args>
 inline void assert(bool cond, Args&& ...args) {
     if (!cond) {
-        std::ostringstream ss;
-        (ss << ... << std::forward<Args>(args));
-        std::cerr << ss.str() << std::endl;
-        abort();
+        print(std::forward<Args>(args)...);
     }
 }
 
