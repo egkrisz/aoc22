@@ -7,16 +7,15 @@
 struct Range {
     int begin; int end;
 
+    Range(const std::string rangeStr) {
+        std::vector<std::string> range = common::tokenize(rangeStr, '-');
+        begin = std::stoi(range[0]); end = std::stoi(range[1]);
+    }
     bool contains(const Range& other) const {
         return (begin <= other.begin && end >= other.end);
     }
     bool overlaps(const Range& other) const {
         return (end >= other.begin && begin <= other.end);
-    }
-    Range(const std::string rangeStr) {
-        std::vector<std::string> range = common::tokenize(rangeStr, '-');
-        begin = std::stoi(range[0]);
-        end = std::stoi(range[1]);
     }
 };
 
