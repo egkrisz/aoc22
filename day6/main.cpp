@@ -4,17 +4,10 @@
 
 #include "../common/common.h"
 
-bool isDifferent(const std::vector<char>& input) {
-    std::set<char> temp;
-    std::copy(input.begin(), input.end(), std::inserter(temp, temp.begin()));
-    return (input.size() == temp.size());
-}
-
 int findMarker(const std::string& buffer, size_t markerLen) {
     for (size_t i = markerLen - 1; i < buffer.size(); ++i) {
-        if (isDifferent(std::vector<char>(buffer.begin() + i - (markerLen - 1), buffer.begin() + i + 1))) {
-            return i+1;
-        }
+        std::set<char> temp{ buffer.begin() + i - (markerLen - 1), buffer.begin() + i + 1 };
+        if (temp.size() == markerLen) return i+1;
     }
     return 0;
 }
