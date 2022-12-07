@@ -9,12 +9,14 @@ Run AOC project for a given day with test or real input.
 Usage: $(basename "$0") -h
   -d DAY     The day of the challange as digits.
   -t         Run the program with test input.
+  -v         Run with valgrind memory sanatizer.
 EOF
 }
 
 is_test="false"
-day="1"
-while getopts ":h:td:" opt; do
+is_valgrind="false"
+day="$(date +%d)"
+while getopts ":h:tvd:" opt; do
   case "${opt}" in
     h)
         usage
@@ -22,6 +24,9 @@ while getopts ":h:td:" opt; do
         ;;
     t)
         is_test="true"
+        ;;
+    v)
+        is_valgrind="true"
         ;;
     d)
         day="${OPTARG}"
@@ -36,4 +41,14 @@ scriptdir=`cd "$(dirname $0)" && pwd`
 cd "${scriptdir}/day${day}"
 g++ -o aoc main.cpp -Wall -std=c++17
 
-[[ "${is_test}" == "true" ]] && ./aoc testin.txt || ./aoc input.txt
+inputfile="input.txt"
+if [[ "${is_test}" == "true" ]]; then
+    inputfile="testin.txt"
+fi
+
+if [[ "${is_valgrind}" == "true" ]]; then
+    valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./aoc "${inputfile}"
+else
+    ./aoc "${inputfile}"
+fi
+
