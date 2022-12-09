@@ -1,9 +1,9 @@
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <map>
 #include <unordered_set>
 #include <sstream>
-#include <vector>
 
 #include "../common/common.h"
 
@@ -44,11 +44,6 @@ struct Pos {
         y += getSign(other.y);
         return *this;
     }
-    std::string str() const {
-        std::stringstream ss;
-        ss << "X: " << x << " Y: " << y;
-        return ss.str();
-    }
 };
 
 struct PosHash {
@@ -62,13 +57,11 @@ static const std::map<char, Pos> moves = {
     { 'R', { 1, 0 } }, { 'L', { -1, 0 } }
 };
 
+template<int N>
 struct Rope {
-    std::vector<Pos> ropes;
+    std::array<Pos, N> ropes;
     std::unordered_set<Pos, PosHash> visited { Pos{ } };
 
-    Rope(size_t ropeLen = 2) {
-        ropes.resize(ropeLen);
-    }
     size_t getVisited() const {
         return visited.size();
     }
@@ -90,9 +83,9 @@ struct Rope {
 int main(int argc, char *argv[]) {
     common::assert(argc >= 2, "No inputfile provided");
 
-    Rope rope{ 2 };
-    Rope brokenRope{ 10 };
-    bool res = common::iterateFile(argv[1], [&rope,&brokenRope](const std::string& line){
+    Rope<2>  rope{ };
+    Rope<10> brokenRope{ };
+    bool res = common::iterateFile(argv[1], [&rope, &brokenRope](const std::string& line){
              auto tok = common::tokenize(line, ' ');
              rope.moveHead(tok[0][0], std::stoi(tok[1]));
              brokenRope.moveHead(tok[0][0], std::stoi(tok[1]));
