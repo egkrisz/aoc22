@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -36,6 +37,23 @@ inline std::vector<std::string> tokenize(const std::string& in, char delim = ' '
         out.emplace_back(tok);
     }
     return out;
+}
+
+inline std::string strip(const std::string &s) {
+    std::string result;
+    result.reserve(s.length());
+    std::remove_copy_if(s.begin(),
+                        s.end(),
+                        std::back_inserter(result),
+                        std::not1(std::ptr_fun(isalnum)));
+    return result;
+}
+
+inline std::string ltrim(std::string s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+    return s;
 }
 
 template<typename ...Args>
