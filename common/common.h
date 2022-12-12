@@ -42,17 +42,12 @@ inline std::vector<std::string> tokenize(const std::string& in, char delim = ' '
 inline std::string strip(const std::string &s) {
     std::string result;
     result.reserve(s.length());
-    std::remove_copy_if(s.begin(),
-                        s.end(),
-                        std::back_inserter(result),
-                        std::not1(std::ptr_fun(isalnum)));
+    std::remove_copy_if(s.begin(), s.end(), std::back_inserter(result), std::not1(std::ptr_fun(isalnum)));
     return result;
 }
 
 inline std::string ltrim(std::string s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-        return !std::isspace(ch);
-    }));
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
     return s;
 }
 
