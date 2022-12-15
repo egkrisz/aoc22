@@ -1,10 +1,12 @@
 #pragma once
 
 #include <algorithm>
+#include <cstdio>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -27,16 +29,20 @@ inline bool iterateFile(const std::string& fileName, std::function<void(const st
     return true;
 }
 
-inline std::vector<std::string> tokenize(const std::string& in, char delim = ' ')
-{
-    std::vector<std::string> out;
-    std::stringstream ss(in);
-    std::string tok;
-    while (!ss.eof()) {
-        std::getline(ss, tok, delim);
-        out.emplace_back(tok);
+inline std::vector<std::string> tokenize(std::string_view v, std::string_view delim) {
+    std::vector<std::string> result;
+
+    size_t pos = 0;
+    while ((pos = v.find(delim)) != std::string::npos) {
+        result.emplace_back(v.substr(0, pos));
+        v.remove_prefix(pos + delim.size());
     }
-    return out;
+    result.emplace_back(v);
+    return result;
+}
+
+inline std::vector<std::string> tokenize(const std::string& in, char delim = ' ') {
+    return tokenize(std::string_view{ in.data(), in.size() }, std::string_view{ &delim, 1 });
 }
 
 inline std::string strip(const std::string &s) {
