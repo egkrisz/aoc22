@@ -9,56 +9,59 @@
 
 //-----------------------------------------------------------------------------------
 
-struct Vec2 : std::pair<size_t, size_t> {
-    using pair::pair;
+template<typename T>
+struct Vec2 : std::pair<T, T> {
+    using std::pair<T, T>::pair;
 
     virtual ~Vec2() = default;
 
-    auto getX() const -> size_t { return first; }
-    auto getY() const -> size_t { return second; }
-    void setX(size_t x)         { first = x;  }
-    void setY(size_t y)         { second = y; }
+    auto getX() const -> T { return this->first; }
+    auto getY() const -> T { return this->second; }
+    void setX(T x)         { this->first = x;  }
+    void setY(T y)         { this->second = y; }
 
-    auto isInlineX(const Vec2& other) const -> bool { return getX() == other.getX(); }
-    auto isInlineY(const Vec2& other) const -> bool { return getY() == other.getY(); }
+    auto isInlineX(const Vec2<T>& other) const -> bool { return getX() == other.getX(); }
+    auto isInlineY(const Vec2<T>& other) const -> bool { return getY() == other.getY(); }
 
     auto up()        const -> Vec2 { return { getX(), getY() - 1 }; }
     auto down()      const -> Vec2 { return { getX(), getY() + 1 }; }
     auto leftDown()  const -> Vec2 { return { getX() - 1, getY() + 1 }; }
     auto rightDown() const -> Vec2 { return { getX() + 1, getY() + 1 }; }
 
-    friend auto operator<(const Vec2& lhs, const Vec2& rhs) -> bool {
+    friend auto operator<(const Vec2<T>& lhs, const Vec2<T>& rhs) -> bool {
         if (lhs.getY() != rhs.getY()) {
             return lhs.getY() < rhs.getY();
         }
         return lhs.getX() < rhs.getX();
     }
-    friend auto operator<<(std::ostream& s, const Vec2& v) -> std::ostream& {
+    friend auto operator<<(std::ostream& s, const Vec2<T>& v) -> std::ostream& {
         s << "X: " << v.getX() << " Y: " << v.getY();
         return s;
     }
 };
 
+using vec2_t = Vec2<size_t>;
+
 //-----------------------------------------------------------------------------------
 
 struct CoordinateMap {
-    std::map<Vec2, char>  map;
+    std::map<vec2_t, char>  map;
     std::optional<size_t> floor{ std::nullopt };
 
     virtual ~CoordinateMap() = default;
 
-    void fill(const Vec2& from, const Vec2& to, char value) {
+    void fill(const vec2_t& from, const vec2_t& to, char value) {
         if (from.isInlineX(to)) {
             auto min = std::min(from.getY(), to.getY());
             auto max = std::max(from.getY(), to.getY());
             for (size_t i = min; i <= max; ++i) {
-                map[Vec2{ from.getX(), i }] = value;
+                map[vec2_t{ from.getX(), i }] = value;
             }
         } else if (from.isInlineY(to)) {
             auto min = std::min(from.getX(), to.getX());
             auto max = std::max(from.getX(), to.getX());
             for (size_t i = min; i <= max; ++i) {
-                map[Vec2{ i, from.getY() }] = value;
+                map[vec2_t{ i, from.getY() }] = value;
             }
         } else {
             common::assert(0, "At least one of two values has to be inline in order to use 'fillMap()");
@@ -98,8 +101,8 @@ struct CoordinateMap {
         return true;
     }
 
-    auto getMinKey() const -> Vec2 {
-        Vec2 min{ map.cbegin()->first };
+    auto getMinKey() const -> vec2_t {
+        vec2_t min{ map.cbegin()->first };
         for (const auto& [key, val] : map) {
             if (key.getX() < min.getX()) min.setX(key.getX());
             if (key.getY() < min.getY()) min.setY(key.getY());
@@ -107,8 +110,8 @@ struct CoordinateMap {
         return min;
     }
 
-    auto getMaxKey() const -> Vec2 {
-        Vec2 max{ 0, 0 };
+    auto getMaxKey() const -> vec2_t {
+        vec2_t max{ 0, 0 };
         for (const auto& [key, val] : map) {
             if (key.getX() > max.getX()) max.setX(key.getX());
             if (key.getY() > max.getY()) max.setY(key.getY());
@@ -116,7 +119,7 @@ struct CoordinateMap {
         return max;
     }
 
-    auto findFirstAvail(size_t x) const -> std::optional<Vec2> {
+    auto findFirstAvail(size_t x) const -> std::optional<vec2_t> {
         for (const auto& [key, val] : map) {
             if (key.getY() > 0 && key.getX() == x && (!floor || key.getY() < *floor)) {
                 return { key.up() };
@@ -125,12 +128,12 @@ struct CoordinateMap {
         return {};
     }
 
-    auto isAvail(const Vec2& tile) const -> bool {
+    auto isAvail(const vec2_t& tile) const -> bool {
         const auto it = map.find(tile);
         return (it == map.cend() && (!floor || tile.getY() < *floor));
     }
 
-    auto isInBounds(const Vec2& tile) const -> bool {
+    auto isInBounds(const vec2_t& tile) const -> bool {
         if (floor) { // For part two
             return true;
         }
@@ -163,7 +166,7 @@ struct CoordinateMap {
 
 //-----------------------------------------------------------------------------------
 
-Vec2 readCoords(std::string_view v) {
+vec2_t readCoords(std::string_view v) {
     size_t pos = v.find(',');
     auto x = v.substr(0, pos);
     v.remove_prefix(pos + 1);
